@@ -1,4 +1,5 @@
 # Link the C runtime into the .exe so it runs on PCs without the Visual C++ Redistributable.
+# packaging\windows\build-installer.ps1 sets its own flags and repeats this one.
 [target.x86_64-pc-windows-msvc]
 rustflags = ["-C", "target-feature=+crt-static"]
 

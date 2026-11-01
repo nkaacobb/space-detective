@@ -18,6 +18,15 @@ DMG="dist/SpaceDetective-$VERSION.dmg"
 
 rustup target add aarch64-apple-darwin x86_64-apple-darwin
 export MACOSX_DEPLOYMENT_TARGET=11.0
+
+# Swap this Mac's folder paths (which include the user name) for neutral ones in the app.
+FLAGS=("--remap-path-prefix=$HOME=~")
+if [[ -n "${CARGO_HOME:-}" ]]; then
+    FLAGS+=("--remap-path-prefix=$CARGO_HOME=cargo")
+fi
+FLAGS+=("--remap-path-prefix=$PWD=.")
+CARGO_ENCODED_RUSTFLAGS=$(IFS=$'\x1f'; echo "${FLAGS[*]}")
+export CARGO_ENCODED_RUSTFLAGS
 cargo build --release --target aarch64-apple-darwin
 cargo build --release --target x86_64-apple-darwin
 
