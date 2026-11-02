@@ -32,6 +32,11 @@ const REVEAL_LABEL: &str = "Show in Finder";
 const REVEAL_LABEL: &str = "Show in file manager";
 
 #[cfg(windows)]
+const PATH_HINT: &str = "Folder to investigate, e.g. C:\\Users";
+#[cfg(not(windows))]
+const PATH_HINT: &str = "Folder to investigate, e.g. /Users";
+
+#[cfg(windows)]
 const DRIVE_WORD: &str = "drive";
 #[cfg(windows)]
 const DRIVES_TITLE: &str = "Drives:";
@@ -339,15 +344,30 @@ impl App {
                 if theme::button(ui, "Browse…", Some(Icon::Folder), ButtonStyle::Normal, !scanning).clicked() {
                     actions.push(Action::Browse);
                 }
-                let drives_w = 110.0 + self.drives.len() as f32 * 52.0;
-                let field_w = (ui.available_width() - drives_w - 150.0).max(220.0);
+                // The path field takes whatever the Scan button and the drive buttons leave. Drive
+                // names can be long ("Macintosh HD"), so measure them rather than guess.
+                let gap = ui.spacing().item_spacing.x;
+                let scan_w = ["Scan", "Cancel"]
+                    .map(|t| theme::button_width(ui, t, Some(Icon::Play), ButtonStyle::Primary))
+                    .into_iter()
+                    .fold(0.0, f32::max);
+                let drives_w = if self.drives.is_empty() {
+                    0.0
+                } else {
+                    let title = ui.painter().layout_no_wrap(DRIVES_TITLE.into(), theme::medium(17.0), theme::CREAM).size().x;
+                    let buttons: f32 = self.drives.iter().map(|d| theme::button_width(ui, &d.label, None, ButtonStyle::Normal) + gap).sum();
+                    title + buttons + gap * 2.0
+                };
+                // The field's margin goes on top of its width.
+                let margin = vec2(12.0, 7.0);
+                let field_w = (ui.available_width() - scan_w - drives_w - gap * 2.0 - margin.x * 2.0 - 8.0).max(220.0);
                 let edit = egui::TextEdit::singleline(&mut self.path_input)
                     .font(theme::medium(18.0))
                     .text_color(theme::CREAM)
                     .background_color(theme::NAVY_DEEP)
-                    .margin(vec2(12.0, 7.0))
+                    .margin(margin)
                     .desired_width(field_w)
-                    .hint_text("Folder to investigate, e.g. C:\\Users");
+                    .hint_text(PATH_HINT);
                 let response = ui.add_enabled(!scanning, edit);
                 ui.painter().rect_stroke(response.rect, CornerRadius::same(6), Stroke::new(1.5_f32, theme::GOLD_DARK), StrokeKind::Outside);
                 let entered = response.lost_focus() && ui.input(|i| i.key_pressed(Key::Enter));

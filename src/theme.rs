@@ -305,15 +305,25 @@ pub enum ButtonStyle {
     Chosen,
 }
 
-/// A navy, gold-trimmed button with an optional icon.
-pub fn button(ui: &mut Ui, text: &str, icon_kind: Option<Icon>, style: ButtonStyle, enabled: bool) -> Response {
-    let (font, height, pad) = match style {
+fn button_metrics(style: ButtonStyle) -> (FontId, f32, f32) {
+    match style {
         ButtonStyle::Primary => (medium(20.0), 40.0, 16.0),
         _ => (medium(16.0), 32.0, 11.0),
-    };
-    let galley = ui.painter().layout_no_wrap(text.to_string(), font, CREAM);
+    }
+}
+
+/// How wide `button` will draw this text, for laying out a row before adding it.
+pub fn button_width(ui: &Ui, text: &str, icon_kind: Option<Icon>, style: ButtonStyle) -> f32 {
+    let (font, height, pad) = button_metrics(style);
     let icon_w = if icon_kind.is_some() { height * 0.55 + 8.0 } else { 0.0 };
-    let width = pad * 2.0 + icon_w + galley.size().x;
+    pad * 2.0 + icon_w + ui.painter().layout_no_wrap(text.to_string(), font, CREAM).size().x
+}
+
+/// A navy, gold-trimmed button with an optional icon.
+pub fn button(ui: &mut Ui, text: &str, icon_kind: Option<Icon>, style: ButtonStyle, enabled: bool) -> Response {
+    let (font, height, pad) = button_metrics(style);
+    let galley = ui.painter().layout_no_wrap(text.to_string(), font, CREAM);
+    let width = button_width(ui, text, icon_kind, style);
     let sense = if enabled { Sense::click() } else { Sense::hover() };
     let (rect, response) = ui.allocate_exact_size(vec2(width, height), sense);
     if !ui.is_rect_visible(rect) {
