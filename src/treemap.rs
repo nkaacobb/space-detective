@@ -3,20 +3,21 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use eframe::egui::epaint::{Vertex, WHITE_UV};
-use eframe::egui::{Color32, Mesh, Pos2, Rect, pos2, vec2};
+use eframe::egui::epaint::Vertex;
+use eframe::egui::{Color32, Mesh, Pos2, Rect, TextureId, pos2, vec2};
 
 use crate::format;
 use crate::scan::{NO_PARENT, Tree};
 
-pub const CANVAS: Color32 = Color32::from_rgb(24, 25, 29);
-const BORDER: Color32 = Color32::from_rgb(16, 17, 20);
-const BODY: Color32 = Color32::from_rgb(36, 38, 45);
-const HEADER: Color32 = Color32::from_rgb(70, 76, 90);
-const FOLDER_BLOCK: Color32 = Color32::from_rgb(92, 97, 110);
-const HEADER_TEXT: Color32 = Color32::from_rgb(228, 231, 238);
+const BORDER: Color32 = Color32::from_rgb(10, 16, 31);
+const BODY: Color32 = Color32::from_rgb(19, 29, 53);
+const HEADER: Color32 = Color32::from_rgb(36, 54, 94);
+const FOLDER_BLOCK: Color32 = Color32::from_rgb(74, 92, 132);
+const HEADER_TEXT: Color32 = Color32::from_rgb(246, 236, 212);
 
-const HEADER_H: f32 = 17.0;
+const HEADER_H: f32 = 19.0;
+/// The paper grain repeats every this many points.
+const GRAIN: f32 = 256.0;
 /// Anything smaller than this many square points is not drawn at all.
 const MIN_AREA: f64 = 0.6;
 
@@ -37,6 +38,8 @@ pub struct Layout {
     /// Parents come before their children, so the last tile under the pointer is the deepest.
     pub tiles: Vec<Tile>,
     pub labels: Vec<Label>,
+    /// Where each folder header's little folder icon goes.
+    pub icons: Vec<Rect>,
     pub mesh: Arc<Mesh>,
     node_tile: HashMap<u32, usize>,
 }
@@ -59,18 +62,20 @@ impl Layout {
     }
 }
 
-pub fn build(tree: &Tree, root: u32, rect: Rect, pixels_per_point: f32) -> Layout {
+/// `grain` is a near-white paper texture that every box is cut from.
+pub fn build(tree: &Tree, root: u32, rect: Rect, pixels_per_point: f32, grain: TextureId) -> Layout {
     let mut b = Builder {
         tree,
         ppp: pixels_per_point,
-        mesh: Mesh::default(),
+        mesh: Mesh::with_texture(grain),
         tiles: Vec::new(),
         labels: Vec::new(),
+        icons: Vec::new(),
         node_tile: HashMap::new(),
     };
     b.quad(rect, [BODY; 4]);
     b.children(root, rect.shrink(2.0));
-    Layout { tiles: b.tiles, labels: b.labels, mesh: Arc::new(b.mesh), node_tile: b.node_tile }
+    Layout { tiles: b.tiles, labels: b.labels, icons: b.icons, mesh: Arc::new(b.mesh), node_tile: b.node_tile }
 }
 
 struct Builder<'a> {
@@ -79,6 +84,7 @@ struct Builder<'a> {
     mesh: Mesh,
     tiles: Vec<Tile>,
     labels: Vec<Label>,
+    icons: Vec<Rect>,
     node_tile: HashMap<u32, usize>,
 }
 
@@ -117,18 +123,24 @@ impl Builder<'_> {
             self.quad(rect, [BORDER; 4]);
             self.quad(rect.shrink(1.0), [BODY; 4]);
             let mut inner = rect.shrink(2.0);
-            if rect.width() >= 40.0 && rect.height() >= 34.0 {
+            if rect.width() >= 44.0 && rect.height() >= 38.0 {
                 let header = Rect::from_min_size(rect.min + vec2(1.0, 1.0), vec2(rect.width() - 2.0, HEADER_H));
                 self.quad(header, vertical_shade(HEADER));
+                let with_icon = header.width() >= 70.0;
+                let text_x = if with_icon { 24.0 } else { 5.0 };
+                if with_icon {
+                    self.icons.push(Rect::from_min_size(header.min + vec2(5.0, 3.0), vec2(15.0, 13.0)));
+                }
                 let name = &*node.name;
                 let with_size = format!("{name}   {}", format::bytes(node.size));
-                let text = if fits(&with_size, 12.0, header.width() - 8.0) { with_size } else { name.to_string() };
+                let text =
+                    if fits(&with_size, 13.0, header.width() - text_x - 4.0) { with_size } else { name.to_string() };
                 self.labels.push(Label {
                     clip: header.shrink2(vec2(3.0, 0.0)),
-                    pos: header.min + vec2(5.0, 1.5),
+                    pos: header.min + vec2(text_x, 1.5),
                     text,
                     color: HEADER_TEXT,
-                    size: 12.0,
+                    size: 13.5,
                 });
                 inner.min.y = header.max.y + 1.0;
             }
@@ -152,7 +164,7 @@ impl Builder<'_> {
         }
         let node = self.tree.node(idx);
         let big = r.width() >= 160.0 && r.height() >= 64.0;
-        let (name_size, size_size) = if big { (15.0, 13.0) } else { (11.5, 11.0) };
+        let (name_size, size_size) = if big { (17.0, 14.5) } else { (13.0, 12.0) };
         let color = text_color_on(bg);
         let clip = r.shrink2(vec2(3.0, 1.0));
         let top = r.min + vec2(5.0, 3.0);
@@ -189,20 +201,21 @@ impl Builder<'_> {
         Rect::from_min_max(pos2(s(r.min.x), s(r.min.y)), pos2(s(r.max.x), s(r.max.y)))
     }
 
-    /// Corner colours go top-left, top-right, bottom-right, bottom-left.
+    /// Corner colours go top-left, top-right, bottom-right, bottom-left. The paper grain is
+    /// mapped by screen position so neighbouring boxes look cut from the same sheet.
     fn quad(&mut self, r: Rect, colors: [Color32; 4]) {
         let base = self.mesh.vertices.len() as u32;
         let corners = [r.left_top(), r.right_top(), r.right_bottom(), r.left_bottom()];
         for (pos, color) in corners.into_iter().zip(colors) {
-            self.mesh.vertices.push(Vertex { pos, uv: WHITE_UV, color });
+            self.mesh.vertices.push(Vertex { pos, uv: pos2(pos.x / GRAIN, pos.y / GRAIN), color });
         }
         self.mesh.indices.extend_from_slice(&[base, base + 1, base + 2, base, base + 2, base + 3]);
     }
 }
 
-/// Lit from the top-left, so each box reads as a slightly raised cushion.
+/// Lit from the top-left, so each box reads as a slightly raised piece of card.
 fn cushion(c: Color32) -> [Color32; 4] {
-    [mix(c, Color32::WHITE, 0.30), mix(c, Color32::WHITE, 0.06), mix(c, Color32::BLACK, 0.38), mix(c, Color32::BLACK, 0.06)]
+    [mix(c, Color32::WHITE, 0.22), mix(c, Color32::WHITE, 0.05), mix(c, Color32::BLACK, 0.30), mix(c, Color32::BLACK, 0.05)]
 }
 
 fn vertical_shade(c: Color32) -> [Color32; 4] {
@@ -218,7 +231,7 @@ fn mix(a: Color32, b: Color32, t: f32) -> Color32 {
 
 fn text_color_on(bg: Color32) -> Color32 {
     let luma = 0.299 * bg.r() as f32 + 0.587 * bg.g() as f32 + 0.114 * bg.b() as f32;
-    if luma > 150.0 { Color32::from_rgb(22, 22, 26) } else { Color32::from_rgb(246, 246, 248) }
+    if luma > 150.0 { Color32::from_rgb(40, 28, 20) } else { Color32::from_rgb(250, 244, 230) }
 }
 
 /// Rough width check so labels don't get cut off mid-word when a shorter one would fit.
@@ -283,6 +296,31 @@ pub fn squarify(areas: &[f64], rect: Rect) -> Vec<Rect> {
 fn worst_ratio(largest: f64, smallest: f64, sum: f64, side: f64) -> f64 {
     let (s2, w2) = (sum * sum, side * side);
     (w2 * largest / s2).max(s2 / (w2 * smallest))
+}
+
+#[cfg(test)]
+mod scan_tests {
+    use crate::scan::{Progress, scan};
+
+    /// Scans a real folder and prints the totals: `SCAN_PATH=C:\ cargo test --release real_scan -- --ignored --nocapture`
+    #[test]
+    #[ignore]
+    fn real_scan() {
+        let path = std::env::var("SCAN_PATH").unwrap_or_else(|_| ".".into());
+        let tree = scan(std::path::Path::new(&path), &Progress::default());
+        let root = tree.node(0);
+        println!(
+            "{path}: {:.1} GB in {} files, {} folders, {} unreadable, {:.1} s",
+            root.size as f64 / 1e9,
+            root.files,
+            root.dirs,
+            tree.errors,
+            tree.elapsed.as_secs_f32()
+        );
+        for &i in tree.largest_files(0, 5).iter() {
+            println!("  {:>8.1} GB  {}", tree.node(i).size as f64 / 1e9, tree.path_of(i).display());
+        }
+    }
 }
 
 #[cfg(test)]

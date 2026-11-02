@@ -1,2 +1,7 @@
 /target
 /dist
+/art/work
+/voice/candidates
+__pycache__/
+# Design mockup made from a real drive listing; kept out of the repo.
+/Space Detective paper-cut dashboard makeover.png

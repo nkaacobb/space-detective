@@ -1,0 +1,35 @@
+{
+  "note": "Paper puppet rig. Units are pixels of the part images. 'anchor' is the joint pin in the part's own image, 'at' is where that pin sits in the parent's image, 'z' is paint order (low first), 'angle' is the rest rotation in degrees (clockwise).",
+  "parts": [
+    { "name": "torso",         "parent": null,            "anchor": [91, 120],  "at": [0, 0],     "z": 5,  "angle": 0 },
+    { "name": "trousers",      "parent": "torso",         "anchor": [82, 6],    "at": [91, 222],  "z": 1,  "angle": 0 },
+    { "name": "leg_left",      "parent": "trousers",      "anchor": [40, 4],    "at": [46, 112],  "z": 2,  "angle": 0 },
+    { "name": "leg_right",     "parent": "trousers",      "anchor": [40, 4],    "at": [118, 112], "z": 2,  "angle": 0 },
+    { "name": "boot_left",     "parent": "leg_left",      "anchor": [78, 14],   "at": [40, 70],   "z": 3,  "angle": 0 },
+    { "name": "boot_right",    "parent": "leg_right",     "anchor": [44, 14],   "at": [40, 70],   "z": 3,  "angle": 0 },
+    { "name": "coat_left",     "parent": "torso",         "anchor": [112, 10],  "at": [44, 4],    "z": 6,  "angle": 0 },
+    { "name": "coat_right",    "parent": "torso",         "anchor": [22, 10],   "at": [138, 4],   "z": 7,  "angle": 0 },
+    { "name": "sleeve_left",   "parent": "torso",         "anchor": [98, 14],   "at": [-26, 24],  "z": 8,  "angle": 0 },
+    { "name": "forearm_left",  "parent": "sleeve_left",   "anchor": [44, 22],   "at": [34, 128],  "z": 9,  "angle": 0 },
+    { "name": "head",          "parent": "torso",         "anchor": [222, 272], "at": [92, 14],   "z": 10, "angle": 0 },
+    { "name": "hat",           "parent": "head",          "anchor": [226, 214], "at": [214, 78],  "z": 11, "angle": 0 },
+    { "name": "sleeve_right",  "parent": "torso",         "anchor": [20, 14],   "at": [208, 24],  "z": 12, "angle": 0 },
+    { "name": "glass",         "parent": "forearm_right", "anchor": [46, 214],  "at": [44, 92],   "z": 13, "angle": 0 },
+    { "name": "forearm_right", "parent": "sleeve_right",  "anchor": [112, 22],  "at": [86, 128],  "z": 14, "angle": 0 }
+  ],
+  "lens": { "part": "glass", "center": [86, 84], "radius": 56 },
+  "eye": [79, -213],
+  "eyes": [
+    { "center": [180, 143], "rx": 40, "ry": 43, "pupil_center": [201, 150], "pupil_rx": 16, "pupil_ry": 23 },
+    { "center": [304, 136], "rx": 31, "ry": 44, "pupil_center": [292, 145], "pupil_rx": 15.5, "pupil_ry": 23 }
+  ],
+  "nose": [261, 182, 40],
+  "moustache": [134, 186, 368, 266],
+  "mouth": { "center": [252, 246], "width": 15, "open": 13 },
+  "poses": {
+    "rest":     {},
+    "hold":     { "lens_target": [176, -150], "glass_angle": 18 },
+    "peer":     { "lens_target": [79, -213], "glass_angle": 0, "head": -3 },
+    "inspect":  { "lens_target": [70, -30], "glass_angle": -12 }
+  }
+}

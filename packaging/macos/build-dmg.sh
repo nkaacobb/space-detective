@@ -36,6 +36,9 @@ lipo -create -output "$APP/Contents/MacOS/$BIN" \
     "target/aarch64-apple-darwin/release/$BIN" \
     "target/x86_64-apple-darwin/release/$BIN"
 cp assets/icon.icns "$APP/Contents/Resources/AppIcon.icns"
+# Licences for the fonts built into the app.
+mkdir -p "$APP/Contents/Resources/licenses"
+cp assets/fonts/OFL-*.txt "$APP/Contents/Resources/licenses/"
 sed "s/@VERSION@/$VERSION/g" packaging/macos/Info.plist > "$APP/Contents/Info.plist"
 
 if [[ -n "${MACOS_SIGN_IDENTITY:-}" ]]; then

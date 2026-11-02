@@ -1,0 +1,338 @@
+{
+ "1": {
+  "class_type": "LoadAudio",
+  "_meta": {
+   "title": "Chosen voice (candidate A)"
+  },
+  "inputs": {
+   "audio": "space-detective/voice_reference.wav"
+  }
+ },
+ "2": {
+  "class_type": "FB_Qwen3TTSVoiceClonePrompt",
+  "_meta": {
+   "title": "Clone voice A once"
+  },
+  "inputs": {
+   "ref_audio": [
+    "1",
+    0
+   ],
+   "ref_text": "Aha! Well... I believe what we have here is a very large file! Good heavens, it's positively enormous. Elementary, my dear user. Quite elementary.",
+   "model_choice": "1.7B",
+   "device": "auto",
+   "precision": "bf16",
+   "attention": "sdpa"
+  }
+ },
+ "c0": {
+  "class_type": "FB_Qwen3TTSVoiceClone",
+  "_meta": {
+   "title": "One detective line (art/make_voice.py repeats this node per line and take). Seeds are fixed (1101, 1102, 1103); temperature 0.5 and top_k 20 keep every take close to voice A."
+  },
+  "inputs": {
+   "target_text": "Ooh, a dusty old folder. Ah... ah... achoo!",
+   "model_choice": "1.7B",
+   "device": "auto",
+   "precision": "bf16",
+   "language": "English",
+   "voice_clone_prompt": [
+    "2",
+    0
+   ],
+   "seed": 1104,
+   "temperature": 0.5,
+   "top_k": 20,
+   "attention": "sdpa"
+  }
+ },
+ "s0": {
+  "class_type": "SaveAudio",
+  "inputs": {
+   "audio": [
+    "c0",
+    0
+   ],
+   "filename_prefix": "space-detective/lines/scan_inside_5_s1104"
+  }
+ },
+ "c1": {
+  "class_type": "FB_Qwen3TTSVoiceClone",
+  "_meta": {
+   "title": "One detective line (art/make_voice.py repeats this node per line and take). Seeds are fixed (1101, 1102, 1103); temperature 0.5 and top_k 20 keep every take close to voice A."
+  },
+  "inputs": {
+   "target_text": "Ooh, a dusty old folder. Ah... ah... achoo!",
+   "model_choice": "1.7B",
+   "device": "auto",
+   "precision": "bf16",
+   "language": "English",
+   "voice_clone_prompt": [
+    "2",
+    0
+   ],
+   "seed": 1105,
+   "temperature": 0.5,
+   "top_k": 20,
+   "attention": "sdpa"
+  }
+ },
+ "s1": {
+  "class_type": "SaveAudio",
+  "inputs": {
+   "audio": [
+    "c1",
+    0
+   ],
+   "filename_prefix": "space-detective/lines/scan_inside_5_s1105"
+  }
+ },
+ "c2": {
+  "class_type": "FB_Qwen3TTSVoiceClone",
+  "_meta": {
+   "title": "One detective line (art/make_voice.py repeats this node per line and take). Seeds are fixed (1101, 1102, 1103); temperature 0.5 and top_k 20 keep every take close to voice A."
+  },
+  "inputs": {
+   "target_text": "Ooh, a dusty old folder. Ah... ah... achoo!",
+   "model_choice": "1.7B",
+   "device": "auto",
+   "precision": "bf16",
+   "language": "English",
+   "voice_clone_prompt": [
+    "2",
+    0
+   ],
+   "seed": 1106,
+   "temperature": 0.5,
+   "top_k": 20,
+   "attention": "sdpa"
+  }
+ },
+ "s2": {
+  "class_type": "SaveAudio",
+  "inputs": {
+   "audio": [
+    "c2",
+    0
+   ],
+   "filename_prefix": "space-detective/lines/scan_inside_5_s1106"
+  }
+ },
+ "c3": {
+  "class_type": "FB_Qwen3TTSVoiceClone",
+  "_meta": {
+   "title": "One detective line (art/make_voice.py repeats this node per line and take). Seeds are fixed (1101, 1102, 1103); temperature 0.5 and top_k 20 keep every take close to voice A."
+  },
+  "inputs": {
+   "target_text": "Case closed! A real byte-sized mystery. Well, terabyte-sized. Which is less catchy.",
+   "model_choice": "1.7B",
+   "device": "auto",
+   "precision": "bf16",
+   "language": "English",
+   "voice_clone_prompt": [
+    "2",
+    0
+   ],
+   "seed": 1104,
+   "temperature": 0.5,
+   "top_k": 20,
+   "attention": "sdpa"
+  }
+ },
+ "s3": {
+  "class_type": "SaveAudio",
+  "inputs": {
+   "audio": [
+    "c3",
+    0
+   ],
+   "filename_prefix": "space-detective/lines/scan_done_4_s1104"
+  }
+ },
+ "c4": {
+  "class_type": "FB_Qwen3TTSVoiceClone",
+  "_meta": {
+   "title": "One detective line (art/make_voice.py repeats this node per line and take). Seeds are fixed (1101, 1102, 1103); temperature 0.5 and top_k 20 keep every take close to voice A."
+  },
+  "inputs": {
+   "target_text": "Case closed! A real byte-sized mystery. Well, terabyte-sized. Which is less catchy.",
+   "model_choice": "1.7B",
+   "device": "auto",
+   "precision": "bf16",
+   "language": "English",
+   "voice_clone_prompt": [
+    "2",
+    0
+   ],
+   "seed": 1105,
+   "temperature": 0.5,
+   "top_k": 20,
+   "attention": "sdpa"
+  }
+ },
+ "s4": {
+  "class_type": "SaveAudio",
+  "inputs": {
+   "audio": [
+    "c4",
+    0
+   ],
+   "filename_prefix": "space-detective/lines/scan_done_4_s1105"
+  }
+ },
+ "c5": {
+  "class_type": "FB_Qwen3TTSVoiceClone",
+  "_meta": {
+   "title": "One detective line (art/make_voice.py repeats this node per line and take). Seeds are fixed (1101, 1102, 1103); temperature 0.5 and top_k 20 keep every take close to voice A."
+  },
+  "inputs": {
+   "target_text": "Case closed! A real byte-sized mystery. Well, terabyte-sized. Which is less catchy.",
+   "model_choice": "1.7B",
+   "device": "auto",
+   "precision": "bf16",
+   "language": "English",
+   "voice_clone_prompt": [
+    "2",
+    0
+   ],
+   "seed": 1106,
+   "temperature": 0.5,
+   "top_k": 20,
+   "attention": "sdpa"
+  }
+ },
+ "s5": {
+  "class_type": "SaveAudio",
+  "inputs": {
+   "audio": [
+    "c5",
+    0
+   ],
+   "filename_prefix": "space-detective/lines/scan_done_4_s1106"
+  }
+ },
+ "c6": {
+  "class_type": "FB_Qwen3TTSVoiceClone",
+  "_meta": {
+   "title": "One detective line (art/make_voice.py repeats this node per line and take). Seeds are fixed (1101, 1102, 1103); temperature 0.5 and top_k 20 keep every take close to voice A."
+  },
+  "inputs": {
+   "target_text": "A picture! Let me see... yes. It is definitely a picture of something.",
+   "model_choice": "1.7B",
+   "device": "auto",
+   "precision": "bf16",
+   "language": "English",
+   "voice_clone_prompt": [
+    "2",
+    0
+   ],
+   "seed": 1104,
+   "temperature": 0.5,
+   "top_k": 20,
+   "attention": "sdpa"
+  }
+ },
+ "s6": {
+  "class_type": "SaveAudio",
+  "inputs": {
+   "audio": [
+    "c6",
+    0
+   ],
+   "filename_prefix": "space-detective/lines/type_image_1_s1104"
+  }
+ },
+ "c7": {
+  "class_type": "FB_Qwen3TTSVoiceClone",
+  "_meta": {
+   "title": "One detective line (art/make_voice.py repeats this node per line and take). Seeds are fixed (1101, 1102, 1103); temperature 0.5 and top_k 20 keep every take close to voice A."
+  },
+  "inputs": {
+   "target_text": "A picture! Let me see... yes. It is definitely a picture of something.",
+   "model_choice": "1.7B",
+   "device": "auto",
+   "precision": "bf16",
+   "language": "English",
+   "voice_clone_prompt": [
+    "2",
+    0
+   ],
+   "seed": 1105,
+   "temperature": 0.5,
+   "top_k": 20,
+   "attention": "sdpa"
+  }
+ },
+ "s7": {
+  "class_type": "SaveAudio",
+  "inputs": {
+   "audio": [
+    "c7",
+    0
+   ],
+   "filename_prefix": "space-detective/lines/type_image_1_s1105"
+  }
+ },
+ "c8": {
+  "class_type": "FB_Qwen3TTSVoiceClone",
+  "_meta": {
+   "title": "One detective line (art/make_voice.py repeats this node per line and take). Seeds are fixed (1101, 1102, 1103); temperature 0.5 and top_k 20 keep every take close to voice A."
+  },
+  "inputs": {
+   "target_text": "A picture! Let me see... yes. It is definitely a picture of something.",
+   "model_choice": "1.7B",
+   "device": "auto",
+   "precision": "bf16",
+   "language": "English",
+   "voice_clone_prompt": [
+    "2",
+    0
+   ],
+   "seed": 1106,
+   "temperature": 0.5,
+   "top_k": 20,
+   "attention": "sdpa"
+  }
+ },
+ "s8": {
+  "class_type": "SaveAudio",
+  "inputs": {
+   "audio": [
+    "c8",
+    0
+   ],
+   "filename_prefix": "space-detective/lines/type_image_1_s1106"
+  }
+ },
+ "c9": {
+  "class_type": "FB_Qwen3TTSVoiceClone",
+  "_meta": {
+   "title": "One detective line (art/make_voice.py repeats this node per line and take). Seeds are fixed (1101, 1102, 1103); temperature 0.5 and top_k 20 keep every take close to voice A."
+  },
+  "inputs": {
+   "target_text": "A cache! Leftovers the computer is saving for later. It never eats them.",
+   "model_choice": "1.7B",
+   "device": "auto",
+   "precision": "bf16",
+   "language": "English",
+   "voice_clone_prompt": [
+    "2",
+    0
+   ],
+   "seed": 1104,
+   "temperature": 0.5,
+   "top_k": 20,
+   "attention": "sdpa"
+  }
+ },
+ "s9": {
+  "class_type": "SaveAudio",
+  "inputs": {
+   "audio": [
+    "c9",
+    0
+   ],
+   "filename_prefix": "space-detective/lines/folder_cache_1_s1104"
+  }
+ }
+}

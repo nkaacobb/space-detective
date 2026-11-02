@@ -1,0 +1,56 @@
+{
+  "1": {
+    "class_type": "FB_Qwen3TTSVoiceDesign",
+    "_meta": { "title": "Voice A - grand Victorian sleuth" },
+    "inputs": {
+      "text": "Aha! Well... I believe what we have here is a very large file! Good heavens, it's positively enormous. Elementary, my dear user. Quite elementary.",
+      "instruct": "An elderly upper-class English gentleman detective with a rich, plummy Received Pronunciation accent. Warm baritone voice, theatrical and pompous, savouring every word, with grand dramatic pauses and delighted self-importance, like a Victorian sleuth announcing a breakthrough to the drawing room.",
+      "model_choice": "1.7B",
+      "device": "auto",
+      "precision": "bf16",
+      "language": "English",
+      "seed": 1101,
+      "temperature": 0.8
+    }
+  },
+  "2": {
+    "class_type": "SaveAudio",
+    "inputs": { "audio": ["1", 0], "filename_prefix": "space-detective/voice_candidate_A" }
+  },
+  "3": {
+    "class_type": "FB_Qwen3TTSVoiceDesign",
+    "_meta": { "title": "Voice B - dry, clipped Oxford inspector" },
+    "inputs": {
+      "text": "Aha! Well... I believe what we have here is a very large file! Good heavens, it's positively enormous. Elementary, my dear user. Quite elementary.",
+      "instruct": "A middle-aged, very posh British inspector with a crisp, clipped Oxford accent. Precise, dry and deadpan, slightly nasal, understated but quietly smug, every consonant perfectly enunciated, as if reading evidence aloud at Scotland Yard.",
+      "model_choice": "1.7B",
+      "device": "auto",
+      "precision": "bf16",
+      "language": "English",
+      "seed": 2202,
+      "temperature": 0.8
+    }
+  },
+  "4": {
+    "class_type": "SaveAudio",
+    "inputs": { "audio": ["3", 0], "filename_prefix": "space-detective/voice_candidate_B" }
+  },
+  "5": {
+    "class_type": "FB_Qwen3TTSVoiceDesign",
+    "_meta": { "title": "Voice C - jolly eccentric professor" },
+    "inputs": {
+      "text": "Aha! Well... I believe what we have here is a very large file! Good heavens, it's positively enormous. Elementary, my dear user. Quite elementary.",
+      "instruct": "A jolly, eccentric old British gentleman with a fruity, upper-crust English accent and a chuckle in his voice. Bumbling and excitable, bursting with enthusiasm, warm and cartoonish, like a beloved children's storybook narrator playing a bumbling detective.",
+      "model_choice": "1.7B",
+      "device": "auto",
+      "precision": "bf16",
+      "language": "English",
+      "seed": 3303,
+      "temperature": 0.8
+    }
+  },
+  "6": {
+    "class_type": "SaveAudio",
+    "inputs": { "audio": ["5", 0], "filename_prefix": "space-detective/voice_candidate_C" }
+  }
+}

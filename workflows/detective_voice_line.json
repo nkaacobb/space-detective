@@ -1,0 +1,39 @@
+{
+  "1": {
+    "class_type": "LoadAudio",
+    "_meta": { "title": "Chosen voice (candidate A)" },
+    "inputs": { "audio": "__REF_AUDIO__" }
+  },
+  "2": {
+    "class_type": "FB_Qwen3TTSVoiceClonePrompt",
+    "_meta": { "title": "Clone voice A once" },
+    "inputs": {
+      "ref_audio": ["1", 0],
+      "ref_text": "__REF_TEXT__",
+      "model_choice": "1.7B",
+      "device": "auto",
+      "precision": "bf16",
+      "attention": "sdpa"
+    }
+  },
+  "10": {
+    "class_type": "FB_Qwen3TTSVoiceClone",
+    "_meta": { "title": "One detective line (art/make_voice.py repeats this node per line and take). Seeds are fixed (1101, 1102, 1103); temperature 0.5 and top_k 20 keep every take close to voice A." },
+    "inputs": {
+      "target_text": "__TEXT__",
+      "model_choice": "1.7B",
+      "device": "auto",
+      "precision": "bf16",
+      "language": "English",
+      "voice_clone_prompt": ["2", 0],
+      "seed": 1101,
+      "temperature": 0.5,
+      "top_k": 20,
+      "attention": "sdpa"
+    }
+  },
+  "11": {
+    "class_type": "SaveAudio",
+    "inputs": { "audio": ["10", 0], "filename_prefix": "__PREFIX__" }
+  }
+}
