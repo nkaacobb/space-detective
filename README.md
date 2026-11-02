@@ -3,6 +3,18 @@
 A Rust desktop app that shows where your disk space went. Pick a folder or drive and every file
 becomes a box sized by how much space it takes. Folders become boxes holding their contents.
 
+![Space Detective showing a scanned folder as nested boxes, with the detective commenting](docs/screenshot.webp)
+
+## Download
+
+Get the Windows installer (`SpaceDetective-Setup-<version>.exe`) or the Mac disk image
+(`SpaceDetective-<version>.dmg`) from the
+[latest release](https://github.com/nkaacobb/space-detective/releases/latest). Neither is
+code-signed yet, so Windows and macOS warn you the first time; [here's how to get
+past that](#warnings-people-will-see).
+
+## Running from source
+
 ```
 cargo run --release
 cargo run --release -- "D:\Some\Folder"   # scan a folder straight away
@@ -89,3 +101,8 @@ Neither download is code-signed yet, so:
   sign and notarize the app (see the top of that script), which removes this.
 
 The app icon is drawn by `packaging/make_icons.py` (needs Pillow). It writes everything in `assets/`.
+
+## License
+
+MIT, see [LICENSE](LICENSE). The fonts in `assets/fonts` are under the SIL Open Font License; their
+licence files are next to them, and both installers include every licence.

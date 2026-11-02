@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 rust-version = "1.85"
 description = "Scan a folder and see what takes up the space, as a treemap"
+license = "MIT"
 
 [dependencies]
 eframe = { version = "0.32", features = ["persistence"] }
